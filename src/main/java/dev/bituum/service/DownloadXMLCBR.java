@@ -6,9 +6,5 @@ import java.util.List;
 
 public interface DownloadXMLCBR {
 
-
-
-
-
     void getTodayQuotesXML();
 }
