@@ -28,6 +28,7 @@ public class BituumFinanceCBRController {
         downloadXMLCBR.getTodayQuotesXML();
     }
 
+    //parsing xml file
     @GetMapping("/parse")
     public void parseXML(){
         try {
