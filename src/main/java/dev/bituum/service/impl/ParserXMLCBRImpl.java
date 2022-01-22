@@ -3,6 +3,8 @@ package dev.bituum.service.impl;
 import dev.bituum.model.Quotes;
 import dev.bituum.service.ParserXMLCBR;
 import dev.bituum.util.CBRHandler;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -16,8 +18,10 @@ import java.util.List;
 import java.util.logging.Logger;
 
 @Service
+@PropertySource("classpath:/config/resourcePath.properties")
 public class ParserXMLCBRImpl implements ParserXMLCBR {
-    private static final String PATH = "/home/bituum/IdeaProjects/BituumFinance/src/main/resources/static/CBRQuotes.xml";
+    @Value("${path.xml}")
+    private String PATH;
     private final SAXParserFactory factory = SAXParserFactory.newInstance();
     private static Logger logger = Logger.getLogger(ParserXMLCBRImpl.class.getName());
     private List<Quotes> resultList = new ArrayList<>();
@@ -30,6 +34,6 @@ public class ParserXMLCBRImpl implements ParserXMLCBR {
         parser.parse(new File(PATH), handler);
         resultList = handler.getQuotesList();
         System.out.println(resultList.toString());
-        return null;
+        return resultList;
     }
 }

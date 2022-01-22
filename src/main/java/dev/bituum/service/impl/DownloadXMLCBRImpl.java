@@ -2,6 +2,8 @@ package dev.bituum.service.impl;
 
 import dev.bituum.service.DownloadXMLCBR;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
@@ -31,13 +33,15 @@ import java.text.SimpleDateFormat;
 import java.util.logging.Logger;
 
 @Service
+@PropertySource("classpath:/config/resourcePath.properties")
 public class DownloadXMLCBRImpl implements DownloadXMLCBR {
     private final String CBRPATH = "http://www.cbr.ru/scripts/XML_daily.asp?date_req=";
     private final SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy");
     private final DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
     private final TransformerFactory transformerFactory = TransformerFactory.newInstance();
     private static Logger logger = Logger.getLogger(DownloadXMLCBRImpl.class.getName());
-    private static String absoluteResourceRootPath = "/home/bituum/IdeaProjects/BituumFinance/src/main/resources/static/CBRQuotes.xml";
+    @Value("${path.xml}")
+    private String absoluteResourceRootPath;
 
     @Override
     public void getTodayQuotesXML() {
