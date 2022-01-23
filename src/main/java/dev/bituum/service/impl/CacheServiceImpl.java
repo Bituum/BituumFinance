@@ -1,13 +1,7 @@
 package dev.bituum.service.impl;
 
-import dev.bituum.model.Quotes;
 import dev.bituum.service.CacheService;
-import lombok.Getter;
 import org.springframework.stereotype.Service;
-
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 @Service
 public class CacheServiceImpl implements CacheService {
     private String cachedString;

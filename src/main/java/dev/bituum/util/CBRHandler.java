@@ -57,6 +57,7 @@ public class CBRHandler extends DefaultHandler {
                         .Nominal(Nominal)
                         .Value(Value)
                         .build());
+                Value = null;
             }
         }
     }

@@ -2,11 +2,12 @@ package dev.bituum.service.impl;
 
 import dev.bituum.model.Quotes;
 import dev.bituum.service.CBRService;
+import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
-
+@Service
 public class CBRServiceImpl implements CBRService {
 
     @Override
@@ -41,9 +42,11 @@ public class CBRServiceImpl implements CBRService {
     }
 
     private Quotes findByCharCode(List<Quotes> list, String charCode){
+        //TODO че за нахуй?
+
         return list.stream()
-                .findFirst()
                 .filter(quote -> quote.getCharCode().equals(charCode))
+                .findAny()
                 .orElseThrow(
                         () -> new IllegalArgumentException("wrong charCode")
                 );
