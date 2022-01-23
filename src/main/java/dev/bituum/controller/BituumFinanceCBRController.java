@@ -31,7 +31,6 @@ public class BituumFinanceCBRController {
     //parsing xml file
     @GetMapping("/parse")
     public void parseXML(){
-        logger.info("NERE");
         try {
             quotesList = parserXMLCBR.parse();
         } catch (Exception e) {

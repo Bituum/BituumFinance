@@ -1,7 +1,9 @@
 package dev.bituum.service.impl;
 
+import dev.bituum.service.CacheService;
 import dev.bituum.service.DownloadXMLCBR;
 import lombok.SneakyThrows;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -42,10 +44,13 @@ public class DownloadXMLCBRImpl implements DownloadXMLCBR {
     private static Logger logger = Logger.getLogger(DownloadXMLCBRImpl.class.getName());
     @Value("${path.xml}")
     private String absoluteResourceRootPath;
+    @Autowired
+    private CacheService cache;
 
     @Override
     public void getTodayQuotesXML() {
         String currentDay = formatter.format(new Date());
+        String xmlSource = null;
 
         HttpClient client = HttpClient.newHttpClient();
         HttpRequest request = HttpRequest.newBuilder()
@@ -53,20 +58,29 @@ public class DownloadXMLCBRImpl implements DownloadXMLCBR {
                 .build();
 
         HttpResponse<String> response = null;
-        try {
-            logger.info("request has been send");
-            response = client.send(request, HttpResponse.BodyHandlers.ofString());
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-            logger.warning("request has been interrupted!");
-           Thread.currentThread().interrupt();
+        if(cache.checkCache(currentDay) || cache.getCachedDay() != null){
+            xmlSource = cache.getCachedQuotes();
+            logger.info("get cache");
+        }else {
+            try {
+                logger.info("request has been send");
+                response = client.send(request, HttpResponse.BodyHandlers.ofString());
+                xmlSource = response != null ? response.body() : null;
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                logger.warning("request has been interrupted!");
+                Thread.currentThread().interrupt();
+            }
         }
-        String xmlSource = response != null ? response.body() : null;
         logger.fine("response has been successfully executed");
+        cache.addCache(xmlSource, currentDay);
+
         createXMLFile(xmlSource);
     }
+
+
 
     private void createXMLFile(String xmlSource){
         try {
