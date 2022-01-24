@@ -6,7 +6,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
-import java.util.stream.Collectors;
 @Service
 public class CBRServiceImpl implements CBRService {
 
@@ -42,8 +41,6 @@ public class CBRServiceImpl implements CBRService {
     }
 
     private Quotes findByCharCode(List<Quotes> list, String charCode){
-        //TODO че за нахуй?
-
         return list.stream()
                 .filter(quote -> quote.getCharCode().equals(charCode))
                 .findAny()

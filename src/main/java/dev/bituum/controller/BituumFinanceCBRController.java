@@ -14,7 +14,6 @@ import org.xml.sax.SAXException;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
 import java.util.List;
-import java.util.Optional;
 import java.util.logging.Logger;
 
 @RestController
@@ -45,23 +44,20 @@ public class BituumFinanceCBRController {
         }
     }
 
-    @GetMapping("/all")
-    public void getXML(){
-        downloadXMLCBR.getTodayQuotesXML();
-    }
-
-    //parsing xml file
-    @GetMapping("/parse")
-    public void parseXML(){
-        try {
-            quotesList = parserXMLCBR.parse();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-    @GetMapping("/get/{CHARCODE}")
-    public Quotes getQuoteByCharCode(@PathVariable("CHARCODE") String charCode){
+    @GetMapping("/get/{CHRCD}")
+    public Quotes getQuoteByCharCode(@PathVariable("CHRCD") String charCode){
         initService();
         return cbrService.getOneByCharCode(quotesList, charCode);
+    }
+
+    @GetMapping("/cmp/{CHRCD1}/{CHRCD2}")
+    public int compareTwoQuotes(@PathVariable("CHRCD1") String first, @PathVariable("CHRCD2") String second){
+        initService();
+        return cbrService.compareTwoQuotes(quotesList, first, second);
+    }
+    @GetMapping("/mlt/{amount}/to/{CHRCD}")
+    public double multiplyQuote(@PathVariable("amount") int amount, @PathVariable("CHRCD") String charCode){
+        initService();
+        return cbrService.multiplyQuotes(quotesList, charCode, amount);
     }
 }
