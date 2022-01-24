@@ -3,6 +3,9 @@ package dev.bituum.service.impl;
 import dev.bituum.model.Quotes;
 import dev.bituum.service.ParserXMLCBR;
 import dev.bituum.util.CBRHandler;
+import dev.bituum.util.FindDistinctByKey;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
 import org.xml.sax.SAXException;
 
@@ -14,10 +17,13 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 @Service
+@PropertySource("classpath:/config/resourcePath.properties")
 public class ParserXMLCBRImpl implements ParserXMLCBR {
-    private static final String PATH = "/home/bituum/IdeaProjects/BituumFinance/src/main/resources/static/CBRQuotes.xml";
+    @Value("${path.xml}")
+    private String PATH;
     private final SAXParserFactory factory = SAXParserFactory.newInstance();
     private static Logger logger = Logger.getLogger(ParserXMLCBRImpl.class.getName());
     private List<Quotes> resultList = new ArrayList<>();
@@ -28,8 +34,12 @@ public class ParserXMLCBRImpl implements ParserXMLCBR {
 
         CBRHandler handler = new CBRHandler(resultList);
         parser.parse(new File(PATH), handler);
-        resultList = handler.getQuotesList();
+        resultList = new ArrayList<>(handler.getQuotesList());
+        resultList = resultList
+                .stream()
+                .filter(FindDistinctByKey.distinctByKey( p -> p.getName() + " " + p.getName() ))
+                .collect(Collectors.toList());
         System.out.println(resultList.toString());
-        return null;
+        return resultList;
     }
 }

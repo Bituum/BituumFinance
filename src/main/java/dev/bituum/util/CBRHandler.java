@@ -9,8 +9,6 @@ import org.xml.sax.helpers.DefaultHandler;
 import java.util.List;
 @Getter
 public class CBRHandler extends DefaultHandler {
-
-    private Quotes quote = new Quotes();
     private String id;
     private int NumCode;
     private String CharCode;
@@ -59,6 +57,7 @@ public class CBRHandler extends DefaultHandler {
                         .Nominal(Nominal)
                         .Value(Value)
                         .build());
+                Value = null;
             }
         }
     }
