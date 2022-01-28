@@ -7,8 +7,8 @@ import java.io.IOException;
 import java.util.Date;
 
 public interface MarketDataService {
-    void getCandles() throws IOException, InterruptedException;
-    JSONPObject getLastPrices(String...figi);
-    JSONPObject getOrderBook(String figi, int depth);
-    JSONPObject getTradingStatus(String figi);
+    String getCandles(String ticker) throws IOException, InterruptedException;
+    String getLastPrices(String...figi);
+    String getOrderBook(String figi, int depth);
+    String getTradingStatus(String figi);
 }

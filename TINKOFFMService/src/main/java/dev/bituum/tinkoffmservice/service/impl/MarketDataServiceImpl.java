@@ -1,10 +1,14 @@
 package dev.bituum.tinkoffmservice.service.impl;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import dev.bituum.tinkoffmservice.enums.CandleInterval;
 import dev.bituum.tinkoffmservice.model.Candle;
 import dev.bituum.tinkoffmservice.service.MarketDataService;
+import dev.bituum.tinkoffmservice.service.TickerService;
 import dev.bituum.tinkoffmservice.util.Extractor;
 import dev.bituum.tinkoffmservice.util.PostRequest;
+
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Service;
@@ -12,10 +16,7 @@ import org.springframework.stereotype.Service;
 import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @PropertySource("classpath:/static/apiConfig.properties")
@@ -31,37 +32,52 @@ public class MarketDataServiceImpl implements MarketDataService {
     @Value("post.postOrder")
     private String postOrder;
 
-    private SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'hh-mm-sssZ");
+    private String figi;
+    private Date getYesterday() {
+        final Calendar cal = Calendar.getInstance();
+        cal.add(Calendar.DATE, -1);
+        return cal.getTime();
+    }
+
+    private final SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
+    @Autowired
+    private TickerService tickerService;
 
     @Override
-    public void getCandles() throws IOException, InterruptedException {
+    public String getCandles(String ticker) throws IOException, InterruptedException {
         Date now = new Date();
+        Date yesterday = getYesterday();
         Map<String, String> map = new HashMap<>();
-        map.put("figi", "BBG004S68758");
-        map.put("from", "2022-01-27T05:15:06.814Z");
-        map.put("to","2022-01-27T19:07:06.814Z");
-        map.put("interval","1");
+        String time = formatter.format(now);
+        String yesterdayTime = formatter.format(yesterday);
+        try{
+            figi = tickerService.findFigi(ticker);
+        }catch (IllegalArgumentException e){
+            e.printStackTrace();
+        }
+
+        //".359Z" its a time zone
+        map.put("figi", figi);
+        map.put("from", yesterdayTime + ".359Z");
+        map.put("to",time + ".359Z");
+        //1 minute interval
+        map.put("interval", String.valueOf(1));
         HttpResponse<String> response = PostRequest.sendPost(map, token, getCandles);
-        //System.out.println(response.body());
-        List<Candle> candleList = Extractor.extract(response.body());
-        System.out.println(candleList);
-        System.out.println(Extractor.extract(response.body()));
-        System.out.println(Extractor.extract(response.body()));
-        System.out.println(Extractor.extract(response.body()));
+        return response.body();
     }
 
     @Override
-    public JSONPObject getLastPrices(String... figi) {
+    public String getLastPrices(String... figi) {
         return null;
     }
 
     @Override
-    public JSONPObject getOrderBook(String figi, int depth) {
+    public String getOrderBook(String figi, int depth) {
         return null;
     }
 
     @Override
-    public JSONPObject getTradingStatus(String figi) {
+    public String getTradingStatus(String figi) {
         return null;
     }
 }
