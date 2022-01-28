@@ -25,12 +25,12 @@ public class MarketDataServiceImpl implements MarketDataService {
     private String token;
     @Value("${post.getCandle}")
     private String getCandles;
-    @Value("post.getOrders")
-    private String getOrders;
-    @Value("post.getOrderState")
-    private String getOrderState;
-    @Value("post.postOrder")
-    private String postOrder;
+    @Value("${post.getLastPrices}")
+    private String getLastPrices;
+    @Value("${post.getOrderBook}")
+    private String getOrderBook;
+    @Value("${post.GetTradingStatus}")
+    private String GetTradingStatus;
 
     private String figi;
     private Date getYesterday() {
@@ -62,22 +62,54 @@ public class MarketDataServiceImpl implements MarketDataService {
         map.put("to",time + ".359Z");
         //1 minute interval
         map.put("interval", String.valueOf(1));
-        HttpResponse<String> response = PostRequest.sendPost(map, token, getCandles);
+        PostRequest<String> request = new PostRequest<>();
+        HttpResponse<String> response = request.sendPost(map, token, getCandles);
         return response.body();
     }
 
     @Override
-    public String getLastPrices(String... figi) {
+    public String getLastPrices(String ticker) {
+        try{
+            String figi = tickerService.findFigi(ticker);
+            Map<String, Object[]> body = new HashMap<>();
+            PostRequest<Object[]> request = new PostRequest<>();
+            List<String> list = new ArrayList<>();
+            list.add(figi);
+            body.put("figi", list.toArray());
+            return request.sendPost(body, token, getLastPrices).body();
+        }catch (IllegalArgumentException | IOException | InterruptedException exception){
+            exception.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public String getOrderBook(String figi, int depth) {
+    public String getOrderBook(String ticker, int depth) {
+        try{
+            String figi = tickerService.findFigi(ticker);
+            Map<String, String> body = new HashMap<>();
+            PostRequest<String> request = new PostRequest<>();
+            body.put("figi", figi);
+            body.put("depth", String.valueOf(depth));
+            return request.sendPost(body, token, getOrderBook).body();
+        } catch (IOException | InterruptedException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 
     @Override
-    public String getTradingStatus(String figi) {
+    public String getTradingStatus(String ticker) {
+        try{
+            String figi = tickerService.findFigi(ticker);
+            Map<String, String> body = new HashMap<>();
+            PostRequest<String> request = new PostRequest<>();
+            body.put("figi", figi);
+
+            return request.sendPost(body, token, GetTradingStatus).body();
+        } catch (IOException | InterruptedException | IllegalArgumentException e) {
+            e.printStackTrace();
+        }
         return null;
     }
 }

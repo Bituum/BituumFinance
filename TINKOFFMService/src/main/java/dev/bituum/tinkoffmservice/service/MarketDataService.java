@@ -8,7 +8,7 @@ import java.util.Date;
 
 public interface MarketDataService {
     String getCandles(String ticker) throws IOException, InterruptedException;
-    String getLastPrices(String...figi);
+    String getLastPrices(String ticker);
     String getOrderBook(String figi, int depth);
     String getTradingStatus(String figi);
 }
