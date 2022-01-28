@@ -1,4 +1,4 @@
-package dev.bituum.tinkoffmservice.module;
+package dev.bituum.tinkoffmservice.model;
 
 import com.google.gson.annotations.SerializedName;
 import lombok.AllArgsConstructor;

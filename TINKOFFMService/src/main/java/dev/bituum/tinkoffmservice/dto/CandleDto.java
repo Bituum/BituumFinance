@@ -1,17 +1,22 @@
 package dev.bituum.tinkoffmservice.dto;
 
-import dev.bituum.tinkoffmservice.module.Candle;
+import com.google.gson.annotations.SerializedName;
+import dev.bituum.tinkoffmservice.model.Candle;
 import lombok.AllArgsConstructor;
-import lombok.ToString;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.List;
 
 @AllArgsConstructor
+@NoArgsConstructor
+@Data
 public class CandleDto {
-    private Candle candleList[];
+    @SerializedName("candles")
+    private List<Candle> candles = new ArrayList<>();
 
     public List<Candle> from(){
-        return Arrays.asList(candleList);
+        return candles;
     }
 }

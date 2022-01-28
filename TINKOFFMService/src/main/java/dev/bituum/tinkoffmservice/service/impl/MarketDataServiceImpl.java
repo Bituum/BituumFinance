@@ -1,8 +1,7 @@
 package dev.bituum.tinkoffmservice.service.impl;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
-import dev.bituum.tinkoffmservice.dto.CandleDto;
-import dev.bituum.tinkoffmservice.enums.CandleInterval;
+import dev.bituum.tinkoffmservice.model.Candle;
 import dev.bituum.tinkoffmservice.service.MarketDataService;
 import dev.bituum.tinkoffmservice.util.Extractor;
 import dev.bituum.tinkoffmservice.util.PostRequest;
@@ -15,6 +14,7 @@ import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @Service
@@ -43,8 +43,8 @@ public class MarketDataServiceImpl implements MarketDataService {
         map.put("interval","1");
         HttpResponse<String> response = PostRequest.sendPost(map, token, getCandles);
         //System.out.println(response.body());
-        CandleDto cdto = Extractor.extract(response.body());
-        System.out.println(cdto.from());
+        List<Candle> candleList = Extractor.extract(response.body());
+        System.out.println(candleList);
         System.out.println(Extractor.extract(response.body()));
         System.out.println(Extractor.extract(response.body()));
         System.out.println(Extractor.extract(response.body()));
