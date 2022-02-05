@@ -23,4 +23,7 @@ public class Candle {
     private String time;
     @SerializedName("isComplete")
     private boolean isComplete;
+
+
+
 }

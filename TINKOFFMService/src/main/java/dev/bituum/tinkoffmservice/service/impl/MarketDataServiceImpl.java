@@ -1,6 +1,7 @@
 package dev.bituum.tinkoffmservice.service.impl;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
+import dev.bituum.tinkoffmservice.dto.CleanCandleDto;
 import dev.bituum.tinkoffmservice.enums.CandleInterval;
 import dev.bituum.tinkoffmservice.model.Candle;
 import dev.bituum.tinkoffmservice.service.MarketDataService;
@@ -17,6 +18,7 @@ import java.io.IOException;
 import java.net.http.HttpResponse;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 @PropertySource("classpath:/static/apiConfig.properties")
@@ -33,7 +35,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     private String GetTradingStatus;
 
     private String figi;
-    private Date getYesterday() {
+    private Date getThreeHoursAgo() {
         final Calendar cal = Calendar.getInstance();
         cal.add(Calendar.DATE, -1);
         return cal.getTime();
@@ -44,12 +46,12 @@ public class MarketDataServiceImpl implements MarketDataService {
     private TickerService tickerService;
 
     @Override
-    public String getCandles(String ticker) throws IOException, InterruptedException {
+    public List<CleanCandleDto> getCandles(String ticker) throws IOException, InterruptedException {
         Date now = new Date();
-        Date yesterday = getYesterday();
+        Date yesterday = getThreeHoursAgo();
         Map<String, String> map = new HashMap<>();
         String time = formatter.format(now);
-        String yesterdayTime = formatter.format(yesterday);
+        String severalHoursAgo = formatter.format(yesterday);
         try{
             figi = tickerService.findFigi(ticker);
         }catch (IllegalArgumentException e){
@@ -58,13 +60,17 @@ public class MarketDataServiceImpl implements MarketDataService {
 
         //".359Z" its a time zone
         map.put("figi", figi);
-        map.put("from", yesterdayTime + ".359Z");
+        map.put("from", severalHoursAgo + ".359Z");
         map.put("to",time + ".359Z");
         //1 minute interval
         map.put("interval", String.valueOf(1));
         PostRequest<String> request = new PostRequest<>();
         HttpResponse<String> response = request.sendPost(map, token, getCandles);
-        return response.body();
+
+        List<Candle> candleList = Extractor.extract(response.body());
+        return candleList.stream()
+                .map(candle -> new CleanCandleDto(candle))
+                .collect(Collectors.toList());
     }
 
     @Override

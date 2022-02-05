@@ -1,5 +1,6 @@
 package dev.bituum.tinkoffmservice.controller;
 
+import dev.bituum.tinkoffmservice.dto.CleanCandleDto;
 import dev.bituum.tinkoffmservice.service.MarketDataService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -8,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.IOException;
+import java.util.List;
 
 @RestController
 public class TinkoffController {
@@ -16,7 +18,8 @@ public class TinkoffController {
     private MarketDataService marketDataService;
 
     @GetMapping("/getCandles/{ticker}")
-    public String getCandles(@PathVariable("ticker") String ticker) throws IOException, InterruptedException {
+    public List<CleanCandleDto> getCandles(@PathVariable("ticker") String ticker) throws IOException, InterruptedException {
+        System.out.println(marketDataService.getCandles(ticker));
         return marketDataService.getCandles(ticker);
     }
 

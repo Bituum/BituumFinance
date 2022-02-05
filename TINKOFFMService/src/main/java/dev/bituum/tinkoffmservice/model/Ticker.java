@@ -23,4 +23,6 @@ public class Ticker {
     String name;
     @Column(name = "figi")
     String figi;
+    @Column(name = "ticker_name")
+    String tickerName;
 }

@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class Quotation {
     @SerializedName("units")
-    private int units;
+    private String units;
     @SerializedName("nano")
-    private int nano;
+    private String nano;
 }

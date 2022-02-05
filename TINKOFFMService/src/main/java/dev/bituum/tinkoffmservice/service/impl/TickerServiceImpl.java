@@ -13,7 +13,7 @@ public class TickerServiceImpl implements TickerService {
     @Override
     public String findFigi(String name) throws IllegalArgumentException{
         String figi = repository
-                .findTickerByName(name)
+                .findTickerByTickerName(name)
                 .getFigi();
 
         if(figi == null){
