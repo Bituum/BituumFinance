@@ -12,8 +12,8 @@ import java.net.http.HttpResponse;
 import java.util.Map;
 
 @PropertySource("classpath:/static/apiConfig.properties")
-public class PostRequest {
-    public static HttpResponse<String> sendPost(Map<String, String> body, String token, String source) throws IOException, InterruptedException {
+public class PostRequest<T> {
+    public HttpResponse<String> sendPost(Map<String, T> body, String token, String source) throws IOException, InterruptedException {
         ObjectMapper objectMapper = new ObjectMapper();
         String requestBody = objectMapper
                 .writerWithDefaultPrettyPrinter()
