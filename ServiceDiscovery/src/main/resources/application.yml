@@ -1,0 +1,16 @@
+spring:
+  application:
+    name: DISCOVERY-SERVICE # ==> This is Service-Id
+
+
+---
+# Items that apply to ALL profiles:
+eureka:
+  instance:
+    appname: DISCOVERY-SERVICE  # ==> This is a instance of DISCOVERY-SERVICE
+  client:
+    fetchRegistry: true
+    serviceUrl:
+      defaultZone: http://localhost:8000/eureka
+server:
+  port: 8001
