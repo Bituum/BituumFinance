@@ -1,9 +1,7 @@
 package dev.bituum.controller;
 
 import dev.bituum.model.Quotes;
-import dev.bituum.service.CBRService;
-import dev.bituum.service.DownloadXMLCBR;
-import dev.bituum.service.ParserXMLCBR;
+import dev.bituum.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -60,4 +58,6 @@ public class BituumFinanceCBRController {
         initService();
         return cbrService.multiplyQuotes(quotesList, charCode, amount);
     }
+
+
 }
