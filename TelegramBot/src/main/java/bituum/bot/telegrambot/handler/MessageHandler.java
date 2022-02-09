@@ -14,12 +14,12 @@ import java.util.Optional;
 
 public class MessageHandler {
     public List<List<InlineKeyboardButton>> handle(Message message){
-
         if (message.hasText() && message.hasEntities()) {
             Optional<MessageEntity> commandEntity =
                     message.getEntities().stream()
                             .filter(e -> "bot_command".equals(e.getType()))
                             .findFirst();
+
             if (commandEntity.isPresent()) {
                 String command =
                         message.getText()
