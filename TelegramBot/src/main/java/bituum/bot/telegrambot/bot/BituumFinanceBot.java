@@ -4,8 +4,13 @@ import bituum.bot.telegrambot.exception.CommandIsEmptyException;
 import bituum.bot.telegrambot.exception.MessageIsEmptyException;
 import bituum.bot.telegrambot.handler.CustomCallbackHandler;
 import bituum.bot.telegrambot.handler.MessageHandler;
+import bituum.bot.telegrambot.util.PropertiesLoader;
 import lombok.SneakyThrows;
+
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
@@ -16,19 +21,21 @@ import org.telegram.telegrambots.meta.api.objects.replykeyboard.buttons.InlineKe
 
 import java.util.List;
 @Slf4j
-//@PropertySource("classpath:/telegramBotConfig.properties")
 public class BituumFinanceBot extends TelegramLongPollingBot {
     private CustomCallbackHandler callbackHandler = new CustomCallbackHandler();
     private MessageHandler messageHandler = new MessageHandler();
+    private String botUsername = "@BituumFinance_bot";
+
+    private String botToken = "5274298440:AAFS96Hw2W5BR3HFh75JmxfcOPTyDvJQHd4";
 
     @Override
     public String getBotUsername() {
-        return "@BituumFinance_bot";
+        return this.botUsername;
     }
 
     @Override
     public String getBotToken() {
-        return "5165061899:AAH8IUwS09FjRO-d1BJkP1p_cMqMiEc79No";
+        return this.botToken;
     }
 
     @SneakyThrows
