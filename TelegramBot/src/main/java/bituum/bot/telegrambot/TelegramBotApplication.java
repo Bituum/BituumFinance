@@ -9,7 +9,6 @@ import org.springframework.context.annotation.ComponentScan;
 public class TelegramBotApplication {
 
     public static void main(String[] args) {
-        InitializeBot.init();
         SpringApplication.run(TelegramBotApplication.class, args);
     }
 
