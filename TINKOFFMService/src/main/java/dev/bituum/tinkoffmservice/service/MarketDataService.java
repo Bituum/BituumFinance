@@ -10,7 +10,7 @@ import java.util.List;
 
 public interface MarketDataService {
     List<CleanCandleDto> getCandles(String ticker) throws IOException, InterruptedException;
-    String getLastPrices(String ticker);
+    Double getLastPrices(String ticker);
     String getOrderBook(String figi, int depth);
     String getTradingStatus(String figi);
 }
