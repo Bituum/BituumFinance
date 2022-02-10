@@ -6,7 +6,9 @@ import bituum.bot.telegrambot.handler.CustomCallbackHandler;
 import bituum.bot.telegrambot.handler.MessageHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.PropertySource;
 import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
@@ -28,13 +30,17 @@ import java.util.Optional;
 
 @Slf4j
 @Component
+@PropertySource("classpath:/telegramBotConfig.properties")
 public class BituumFinanceBot extends TelegramLongPollingBot {
-    private final CustomCallbackHandler callbackHandler = new CustomCallbackHandler();
+    @Autowired
+    private CustomCallbackHandler callbackHandler;
     private final MessageHandler messageHandler = new MessageHandler();
     @Value("${telegram.botname}")
     private String botUsername;
     @Value("${telegram.token}")
     private String botToken;
+
+    private boolean hasError = false;
 
     @Override
     public String getBotUsername() {
@@ -49,10 +55,6 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-        //TODO HANDLERS  of message and callback(keyboard)
-        //TODO make request to my service discovery like http://localhost:8000/tink/getCandels/SBER
-        //TODO it should make a responce from one of the instances of tinkov service
-        //also todo cbr service
         //TODO сделать подписку бота, добавление в фаварит бумаги, отслеживание цени и уведомление
         if(update.hasMessage()){
             log.info(update.getMessage().toString());
@@ -77,7 +79,7 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                                         .keyboard(keyboard)
                                         .build())
                                 .build());
-            }catch (MessageIsEmptyException | CommandIsEmptyException emptyException){
+            }catch (RuntimeException emptyException){
                 execute(
                         SendMessage
                                 .builder()
@@ -91,10 +93,10 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
             }
         } else if(update.hasCallbackQuery()){
             Message message = update.getCallbackQuery().getMessage();
-            List<List<InlineKeyboardButton>> keyboard = callbackHandler.handle(update.getCallbackQuery());
             try{
+                List<List<InlineKeyboardButton>> keyboard = callbackHandler.handle(update.getCallbackQuery());
                 execute(
-                        //TODO выдает ошибку о том, что нужно внести изменения в edit, иначе какой смысл изменять
+                        //выдает ошибку о том, что нужно внести изменения в edit, иначе какой смысл изменять
                         EditMessageReplyMarkup
                                 .builder()
                                 .chatId(message.getChatId().toString())
@@ -104,13 +106,34 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                                         .keyboard(keyboard)
                                         .build())
                                 .build());
-            }catch (NullPointerException | TelegramApiRequestException exception ){
-                System.out.println("no edit blah blah blah");
+            }catch (TelegramApiRequestException exception ){
+                log.info("edit error captured ^_^");
+            }catch (RuntimeException exception){
+                execute(SendMessage
+                        .builder()
+                        .chatId(message.getChatId().toString())
+                        .text("Я не нашел такой ticker! Попробуйте еще раз /ticker 'Название бумаги'")
+                        .build()
+                );
+                hasError = true;
             }
-            execute(SendPhoto.builder()
-                    .chatId(message.getChatId().toString())
-                    .photo(new InputFile(new File("/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png")))
-                    .build());
+            //К сожалению надо использовать систему с глобальным датчик ошибки
+            if(CustomCallbackHandler.information != null && !hasError){
+                execute(SendMessage
+                        .builder()
+                        .chatId(message.getChatId().toString())
+                        .text(CustomCallbackHandler.information)
+                        .build());
+                CustomCallbackHandler.information = null;
+                hasError = false;
+            } else if(!hasError) {
+                execute(SendPhoto.builder()
+                        .chatId(message.getChatId().toString())
+                        .photo(new InputFile(new File("/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png")))
+                        .build()
+                );
+                hasError = false;
+            }
         }
 
     }
