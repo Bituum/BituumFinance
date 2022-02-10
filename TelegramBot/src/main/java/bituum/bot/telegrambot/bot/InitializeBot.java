@@ -9,8 +9,8 @@ import org.telegram.telegrambots.updatesreceivers.DefaultBotSession;
 public class InitializeBot {
     @SneakyThrows
     public static void init(){
-        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
-        BituumFinanceBot bot = new BituumFinanceBot();
-        telegramBotsApi.registerBot(bot);
+//        TelegramBotsApi telegramBotsApi = new TelegramBotsApi(DefaultBotSession.class);
+//        BituumFinanceBot bot = new BituumFinanceBot();
+//        telegramBotsApi.registerBot(bot);
     }
 }

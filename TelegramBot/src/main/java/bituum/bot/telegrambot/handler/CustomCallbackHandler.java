@@ -24,7 +24,7 @@ public class CustomCallbackHandler {
         String action = callbackQuery.getData();
         switch (action){
             case "graph":
-                log.info(callbackQuery.getMessage().getText().toString());
+                log.info(callbackQuery.getMessage().getText());
                 log.info("graph service");
                 processService.execute(location, callbackQuery.getMessage().getText());
                 break;

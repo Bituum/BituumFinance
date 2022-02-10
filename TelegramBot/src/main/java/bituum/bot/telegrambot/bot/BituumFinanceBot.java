@@ -6,9 +6,12 @@ import bituum.bot.telegrambot.handler.CustomCallbackHandler;
 import bituum.bot.telegrambot.handler.MessageHandler;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
+import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -24,11 +27,14 @@ import java.util.Locale;
 import java.util.Optional;
 
 @Slf4j
+@Component
 public class BituumFinanceBot extends TelegramLongPollingBot {
     private final CustomCallbackHandler callbackHandler = new CustomCallbackHandler();
     private final MessageHandler messageHandler = new MessageHandler();
-    private final String botUsername = "@BituumFinance_bot";
-    private final String botToken = "5274298440:AAFS96Hw2W5BR3HFh75JmxfcOPTyDvJQHd4";
+    @Value("${telegram.botname}")
+    private String botUsername;
+    @Value("${telegram.token}")
+    private String botToken;
 
     @Override
     public String getBotUsername() {
