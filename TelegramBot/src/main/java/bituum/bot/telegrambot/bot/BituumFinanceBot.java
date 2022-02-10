@@ -4,6 +4,7 @@ import bituum.bot.telegrambot.exception.CommandIsEmptyException;
 import bituum.bot.telegrambot.exception.MessageIsEmptyException;
 import bituum.bot.telegrambot.handler.CustomCallbackHandler;
 import bituum.bot.telegrambot.handler.MessageHandler;
+
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -88,6 +89,7 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                                         .getMessage()
                                         .getChatId()
                                         .toString())
+
                                 .build()
                 );
             }

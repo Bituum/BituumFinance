@@ -24,7 +24,7 @@ public class TinkoffController {
     }
 
     @GetMapping("/get_last_price/{ticker}")
-    public String getLastPrice(@PathVariable("ticker") String ticker) {
+    public Double getLastPrice(@PathVariable("ticker") String ticker) {
         return marketDataService.getLastPrices(ticker);
     }
 
