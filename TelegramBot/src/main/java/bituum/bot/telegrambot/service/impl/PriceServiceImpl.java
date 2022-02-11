@@ -8,6 +8,7 @@ import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.sql.SQLException;
 import java.util.Optional;
 
 @Service
@@ -42,6 +43,17 @@ public class PriceServiceImpl implements PriceService {
             }
 
         }
+    }
+
+    public void disableGetInformationAboutLastPrice(String chatId, String ticker){
+        repository.deleteById(findEntityId(chatId, ticker).getId());
+    }
+
+    private UserTickerPrice findEntityId(String chatId, String ticker){
+        return repository.getUserTickerPriceByChatIdAndName(chatId, ticker)
+                .orElseThrow(
+                () -> new RuntimeException("There are not entity in the database!")
+        );
     }
 
 

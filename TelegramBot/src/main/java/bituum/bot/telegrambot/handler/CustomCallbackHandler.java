@@ -22,6 +22,7 @@ public class CustomCallbackHandler {
     private PriceService priceService;
 
     public static String information;
+    public static boolean amIStopLooking = false;
 
 
     private final String location = "/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png";
@@ -31,15 +32,33 @@ public class CustomCallbackHandler {
         String action = callbackQuery.getData();
         switch (action) {
             case "graph" -> {
-                log.info(callbackQuery.getMessage().getText());
                 log.info("graph service");
                 processService.execute(location, callbackQuery.getMessage().getText());
+                return initButtons();
             }
             case "last_price" -> {
                 log.info("price service");
                 information = priceService.getInformationAboutLastPrice(callbackQuery.getMessage().getChatId().toString(), callbackQuery.getMessage().getText());
+                return initPriceServiceButtons();
             }
             case "subscribe" -> log.info("sub service");
+
+            case "stop_looking_for" ->{
+                log.info("stop looking for action");
+                priceService.disableGetInformationAboutLastPrice(
+                        callbackQuery.getMessage().getChatId().toString(),
+                        callbackQuery.getMessage().getText());
+                amIStopLooking = true;
+                return initButtons();
+            }
+
+            case "get_info_about_ticker" ->{
+                log.info("get_info_about_ticker_action");
+                information = priceService.getInformationAboutLastPrice(callbackQuery.getMessage().getChatId().toString(), callbackQuery.getMessage().getText());
+                return initPriceServiceButtons();
+            }
+
+
         }
 
         return initButtons();
@@ -54,8 +73,32 @@ public class CustomCallbackHandler {
                                 .callbackData("graph")
                                 .build(),
                         InlineKeyboardButton.builder()
-                                .text("Цена")
+                                .text("Отслеживать цену")
                                 .callbackData("last_price")
+                                .build(),
+                        InlineKeyboardButton.builder()
+                                .text("Подписка")
+                                .callbackData("subscribe")
+                                .build()
+                )
+        );
+        return buttons;
+    }
+    private List<List<InlineKeyboardButton>> initPriceServiceButtons(){
+        List<List<InlineKeyboardButton>> buttons = new ArrayList<>();
+        buttons.add(
+                Arrays.asList(
+                        InlineKeyboardButton.builder()
+                                .text("График")
+                                .callbackData("graph")
+                                .build(),
+                        InlineKeyboardButton.builder()
+                                .text("прекратить отслеживать")
+                                .callbackData("stop_looking_for")
+                                .build(),
+                        InlineKeyboardButton.builder()
+                                .text("узнать изменение")
+                                .callbackData("get_info_about_ticker")
                                 .build(),
                         InlineKeyboardButton.builder()
                                 .text("Подписка")
