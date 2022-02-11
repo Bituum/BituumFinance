@@ -1,7 +1,5 @@
 package bituum.bot.telegrambot.bot;
 
-import bituum.bot.telegrambot.exception.CommandIsEmptyException;
-import bituum.bot.telegrambot.exception.MessageIsEmptyException;
 import bituum.bot.telegrambot.handler.CustomCallbackHandler;
 import bituum.bot.telegrambot.handler.MessageHandler;
 import lombok.SneakyThrows;
@@ -13,7 +11,6 @@ import org.springframework.stereotype.Component;
 import org.telegram.telegrambots.bots.TelegramLongPollingBot;
 import org.telegram.telegrambots.meta.api.methods.send.SendMessage;
 import org.telegram.telegrambots.meta.api.methods.send.SendPhoto;
-import org.telegram.telegrambots.meta.api.methods.updatingmessages.DeleteMessage;
 import org.telegram.telegrambots.meta.api.methods.updatingmessages.EditMessageReplyMarkup;
 import org.telegram.telegrambots.meta.api.objects.InputFile;
 import org.telegram.telegrambots.meta.api.objects.Message;
@@ -25,8 +22,6 @@ import org.telegram.telegrambots.meta.exceptions.TelegramApiRequestException;
 
 import java.io.File;
 import java.util.List;
-import java.util.Locale;
-import java.util.Optional;
 
 @Slf4j
 @Component
@@ -109,6 +104,7 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
             }catch (TelegramApiRequestException exception ){
                 log.info("edit error captured ^_^");
             }catch (RuntimeException exception){
+                exception.printStackTrace();
                 execute(SendMessage
                         .builder()
                         .chatId(message.getChatId().toString())
@@ -118,7 +114,7 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                 hasError = true;
             }
             //К сожалению надо использовать систему с глобальным датчик ошибки
-            if(CustomCallbackHandler.information != null && !hasError){
+            if(CustomCallbackHandler.information != null && !hasError && !CustomCallbackHandler.amIStopLooking){
                 execute(SendMessage
                         .builder()
                         .chatId(message.getChatId().toString())
@@ -126,7 +122,8 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                         .build());
                 CustomCallbackHandler.information = null;
                 hasError = false;
-            } else if(!hasError) {
+
+            } else if(!hasError && !CustomCallbackHandler.amIStopLooking) {
                 execute(SendPhoto.builder()
                         .chatId(message.getChatId().toString())
                         .photo(new InputFile(new File("/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png")))
@@ -134,6 +131,9 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
                 );
                 hasError = false;
             }
+            //bruh
+            CustomCallbackHandler.amIStopLooking = false;
+
         }
 
     }

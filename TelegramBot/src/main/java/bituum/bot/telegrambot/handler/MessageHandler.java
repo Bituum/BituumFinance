@@ -34,7 +34,7 @@ public class MessageHandler {
                                                 .callbackData("graph")
                                                 .build(),
                                         InlineKeyboardButton.builder()
-                                                .text("Цена")
+                                                .text("Отслеживать цену")
                                                 .callbackData("last_price")
                                                 .build(),
                                         InlineKeyboardButton.builder()
