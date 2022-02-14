@@ -83,7 +83,6 @@ public class MessageHandler {
                                 .chatId(message.getChatId().toString())
                                 .ticker(unsubTicker)
                                 .build());
-
                         unsubButton.add(
                                 Arrays.asList(
                                         InlineKeyboardButton.builder()

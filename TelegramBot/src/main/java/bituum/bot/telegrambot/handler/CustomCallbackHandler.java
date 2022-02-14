@@ -22,9 +22,9 @@ public class CustomCallbackHandler {
     @Autowired
     private PriceService priceService;
 
+
     public static String information;
     public static boolean amIStopLooking = false;
-
 
     private final String location = "/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png";
 
