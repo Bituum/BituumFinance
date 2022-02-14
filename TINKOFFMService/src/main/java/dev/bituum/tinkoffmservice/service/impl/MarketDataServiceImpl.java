@@ -2,11 +2,15 @@ package dev.bituum.tinkoffmservice.service.impl;
 
 import com.fasterxml.jackson.databind.util.JSONPObject;
 import dev.bituum.tinkoffmservice.dto.CleanCandleDto;
+
+import dev.bituum.tinkoffmservice.dto.CleanLastPriceDto;
 import dev.bituum.tinkoffmservice.enums.CandleInterval;
 import dev.bituum.tinkoffmservice.model.Candle;
+import dev.bituum.tinkoffmservice.model.LastPrice;
 import dev.bituum.tinkoffmservice.service.MarketDataService;
 import dev.bituum.tinkoffmservice.service.TickerService;
 import dev.bituum.tinkoffmservice.util.Extractor;
+import dev.bituum.tinkoffmservice.util.LastPriceExtractor;
 import dev.bituum.tinkoffmservice.util.PostRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -74,7 +78,7 @@ public class MarketDataServiceImpl implements MarketDataService {
     }
 
     @Override
-    public String getLastPrices(String ticker) {
+    public Double getLastPrices(String ticker) {
         try{
             String figi = tickerService.findFigi(ticker);
             Map<String, Object[]> body = new HashMap<>();
@@ -82,7 +86,12 @@ public class MarketDataServiceImpl implements MarketDataService {
             List<String> list = new ArrayList<>();
             list.add(figi);
             body.put("figi", list.toArray());
-            return request.sendPost(body, token, getLastPrices).body();
+            HttpResponse<String> response = request.sendPost(body, token, getLastPrices);
+            List<LastPrice> lastPrices = LastPriceExtractor.extract(response.body());
+            List<CleanLastPriceDto> cleanLastPriceDtos = lastPrices.stream()
+                    .map(lastPrice -> new CleanLastPriceDto(lastPrice))
+                    .collect(Collectors.toList());
+            return cleanLastPriceDtos.get(0).getLastPrice();
         }catch (IllegalArgumentException | IOException | InterruptedException exception){
             exception.printStackTrace();
         }
