@@ -50,7 +50,6 @@ public class BituumFinanceBot extends TelegramLongPollingBot {
     @SneakyThrows
     @Override
     public void onUpdateReceived(Update update) {
-        //TODO сделать подписку бота, добавление в фаварит бумаги, отслеживание цени и уведомление
         if(update.hasMessage()){
             log.info(update.getMessage().toString());
             try{
