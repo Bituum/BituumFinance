@@ -3,6 +3,7 @@ package bituum.bot.telegrambot.handler;
 import bituum.bot.telegrambot.service.PriceService;
 
 import bituum.bot.telegrambot.service.ProcessService;
+import bituum.bot.telegrambot.service.SubscribeService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,7 +42,6 @@ public class CustomCallbackHandler {
                 information = priceService.getInformationAboutLastPrice(callbackQuery.getMessage().getChatId().toString(), callbackQuery.getMessage().getText());
                 return initPriceServiceButtons();
             }
-            case "subscribe" -> log.info("sub service");
 
             case "stop_looking_for" ->{
                 log.info("stop looking for action");
@@ -93,16 +93,20 @@ public class CustomCallbackHandler {
                                 .callbackData("graph")
                                 .build(),
                         InlineKeyboardButton.builder()
+                                .text("Подписка")
+                                .callbackData("subscribe")
+                                .build()
+                )
+        );
+        buttons.add(
+                Arrays.asList(
+                        InlineKeyboardButton.builder()
                                 .text("прекратить отслеживать")
                                 .callbackData("stop_looking_for")
                                 .build(),
                         InlineKeyboardButton.builder()
                                 .text("узнать изменение")
                                 .callbackData("get_info_about_ticker")
-                                .build(),
-                        InlineKeyboardButton.builder()
-                                .text("Подписка")
-                                .callbackData("subscribe")
                                 .build()
                 )
         );
