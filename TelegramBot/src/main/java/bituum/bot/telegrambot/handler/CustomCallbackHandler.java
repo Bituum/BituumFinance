@@ -1,6 +1,7 @@
 package bituum.bot.telegrambot.handler;
 
 import bituum.bot.telegrambot.service.PriceService;
+
 import bituum.bot.telegrambot.service.ProcessService;
 import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
@@ -22,6 +23,7 @@ public class CustomCallbackHandler {
 
     public static String information;
     public static boolean amIStopLooking = false;
+
 
     private final String location = "/home/bituum/IdeaProjects/BituumFinance/TelegramBot/src/main/resources/image.png";
 
