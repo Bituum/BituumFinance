@@ -22,7 +22,6 @@ public class CustomCallbackHandler {
     @Autowired
     private PriceService priceService;
 
-
     public static String information;
     public static boolean amIStopLooking = false;
 
@@ -57,6 +56,7 @@ public class CustomCallbackHandler {
                 information = priceService.getInformationAboutLastPrice(callbackQuery.getMessage().getChatId().toString(), callbackQuery.getMessage().getText());
                 return initPriceServiceButtons();
             }
+
 
 
         }
